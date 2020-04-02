@@ -6,6 +6,6 @@ module.exports = {
     require("postcss-url"),
     // to edit target browsers: use "browserslist" field in package.json
     require("autoprefixer"),
-    require("./public/extract-theme-webpack-plugin/loader/postcss-theme")
+    require("./webpack/extract-theme-webpack-plugin/loader/postcss-theme")
   ]
 };
