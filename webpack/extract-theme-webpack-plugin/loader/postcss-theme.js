@@ -85,14 +85,18 @@ module.exports = postcss.plugin("theme-loader", params => root => {
 
   root.walkRules(node => {
     let match = node.selector.match(THEMEREG);
+    // 类名带主题时
     if (match && match[1]) {
       node.selector = replaceNormal(node.selector);
+      //若主题与style.theme相同且为研发环境时，直接生效
       if (match[1] === theme && !isProduction) {
         walkDeclsCurrent(node);
       } else {
+        //若不是当前主题  则提取样式
         chunkNode(node, match[1]);
       }
     } else {
+      // 遍历样式
       walkDeclsChunk(node, theme);
     }
   });
