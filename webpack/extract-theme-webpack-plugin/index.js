@@ -1,29 +1,29 @@
-var _webpackSources = require('webpack-sources')
-var _loaderUtils = require('loader-utils')
+var _webpackSources = require("webpack-sources");
+var _loaderUtils = require("loader-utils");
 
 function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { default: obj }
+  return obj && obj.__esModule ? obj : { default: obj };
 }
 
-var _loaderUtils2 = _interopRequireDefault(_loaderUtils)
+var _loaderUtils2 = _interopRequireDefault(_loaderUtils);
 
-const protoToString = Object.prototype.toString
+const protoToString = Object.prototype.toString;
 
-const isString = val => protoToString.call(val) === '[object String]'
+const isString = val => protoToString.call(val) === "[object String]";
 
-const isFunction = val => protoToString.call(val) === '[object Function]'
+const isFunction = val => protoToString.call(val) === "[object Function]";
 
-const themer = require('./loader/themer')()
+const themer = require("./loader/themer")();
 
 module.exports = class postCssTheme {
   constructor(options) {
     if (isString(options)) {
-      this.filename = options
+      this.filename = options;
     } else {
-      this.filename = options.filename
+      this.filename = options.filename;
     }
     if (!this.filename) {
-      throw new Error('extract theme Plugin:filename is null')
+      throw new Error("extract theme Plugin:filename is null");
     }
   }
   source(item) {
@@ -32,15 +32,15 @@ module.exports = class postCssTheme {
         item.node.toString(),
         null,
         item.source
-      )
+      );
     }
-    return new _webpackSources.RawSource(item.node.toString())
+    return new _webpackSources.RawSource(item.node.toString());
   }
   apply(compiler) {
-    let filename = this.filename
-    let that = this
-    compiler.plugin('this-compilation', function(compilation) {
-      compilation.plugin('additional-assets', function(callback) {
+    let filename = this.filename;
+    let that = this;
+    compiler.plugin("this-compilation", function(compilation) {
+      compilation.plugin("additional-assets", function(callback) {
         var getPath = function getPath(value, format) {
           return compilation
             .getPath(format, {
@@ -50,23 +50,25 @@ module.exports = class postCssTheme {
               /\[(?:(\w+):)?theme(?::([a-z]+\d*))?(?::(\d+))?\]/gi,
               function() {
                 // eslint-disable-line func-names
-                return value
+                return value;
               }
-            )
-        }
+            );
+        };
         themer.each((name, node) => {
-          var source = new _webpackSources.ConcatSource()
+          var source = new _webpackSources.ConcatSource();
           for (var i = 0, len = node.length; i < len; i++) {
-            let _source = that.source(node[i])
-            source.add(_source)
+            let _source = that.source(node[i]);
+            source.add(_source);
           }
           var file = isFunction(filename)
             ? filename(getPath.bind(null, value))
-            : getPath(name, filename)
-          compilation.assets[file] = source
-        })
-        callback()
-      })
-    })
+            : getPath(name, filename);
+          compilation.assets[file] = source;
+        });
+        callback();
+      });
+    });
   }
-}
+};
+
+module.exports.loader = require("./loader/postcss-theme");
